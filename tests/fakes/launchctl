@@ -1,0 +1,19 @@
+#!/bin/bash
+# Fake launchctl for the tests. Records each call; `print` answers from FAKE_LAUNCHCTL_LOADED (1 = loaded)
+# and FAKE_LAUNCHCTL_EXIT (the last exit code, or "never" for a job that hasn't run).
+echo "launchctl $*" >> "${FAKE_LAUNCHCTL_CALLS:-/dev/null}"
+case "$1" in
+  print)
+    [ "${FAKE_LAUNCHCTL_LOADED:-0}" = 1 ] || { echo "Could not find service \"$2\" in domain for user gui: 501" >&2; exit 113; }
+    echo "$2 = {"
+    echo "	state = not running"
+    echo "	runs = 3"
+    if [ "${FAKE_LAUNCHCTL_EXIT:-never}" = never ]; then echo "	last exit code = (never exited)"
+    else echo "	last exit code = ${FAKE_LAUNCHCTL_EXIT}"; fi
+    echo "}" ;;
+  bootout)
+    [ "${FAKE_LAUNCHCTL_LOADED:-0}" = 1 ] || { echo "Boot-out failed: 3: No such process" >&2; exit 3; } ;;
+  bootstrap|kickstart) ;;
+  *) exit 1 ;;
+esac
+exit 0

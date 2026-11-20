@@ -1,0 +1,4 @@
+# Orgs backed up by Save Point, one per line: project folder, org folder, Salesforce CLI alias.
+# Add or remove an org with add-org.sh and remove-org.sh, or edit this file. Lines starting with # are skipped.
+# The alias must be logged in on this Mac (list-orgs.sh). Read-only on every org.
+project,org,alias

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Save Point's schedule, written by schedule.sh install. Change the times by running schedule.sh install again with new times.
+  Runs the kit's backup-orgs.sh at each time, in the Mac's time zone. If the Mac is asleep then, macOS runs it once
+  when it wakes. The script keeps the Mac awake until the run finishes. launchd starts /bin/bash directly, so
+  /bin/bash is the program that needs Full Disk Access (the Desktop, Documents and Google Drive are protected).
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>__LABEL__</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>__SCRIPT__</string>
+        <string>--dir</string>
+        <string>__BACKUP_DIR__</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <array>
+__INTERVALS__
+    </array>
+    <key>StandardOutPath</key>
+    <string>__LOG__</string>
+    <key>StandardErrorPath</key>
+    <string>__LOG__</string>
+</dict>
+</plist>

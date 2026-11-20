@@ -1,0 +1,85 @@
+#!/bin/bash
+# Fake Salesforce CLI for the tests. Never talks to an org.
+#
+#   FAKE_SF_CALLS=<file>        every call is appended here, one line, arguments joined by spaces
+#   FAKE_SF_ORG_LIST=<file>     JSON printed by `sf org list --json` (a default list otherwise)
+#   FAKE_SF_EXPIRED=<alias,...> `sf org display` fails for these aliases
+#   FAKE_SF_FAIL=<alias,...>    `sf hardis org monitor backup` fails for these aliases
+#   FAKE_SF_CHANGE=1            the backup writes a changed FlexiPage (a real change)
+#   FAKE_SF_PAGE=<text>         the backup writes this exact FlexiPage label (a repeatable change)
+#   FAKE_SF_NOISE=<text>        the backup writes this text into the .site and clean rule files (noise only)
+#   FAKE_SF_PLUGINS=<text>      printed by `sf plugins` (sfdx-hardis 8.30.0 otherwise)
+#   FAKE_SF_VERSION=<text>      printed by `sf --version`
+
+[ -n "${FAKE_SF_CALLS:-}" ] && echo "sf $*" >> "$FAKE_SF_CALLS"
+
+in_list() { case ",$2," in *",$1,"*) return 0 ;; esac; return 1; }
+
+target_org() {
+  while [ "$#" -gt 0 ]; do
+    case "$1" in --target-org|-o) echo "$2"; return ;; esac
+    shift
+  done
+}
+
+case "$1 ${2:-}" in
+  "--version "*)
+    echo "${FAKE_SF_VERSION:-@salesforce/cli/2.158.7 darwin-arm64 node-v24.18.0}"; exit 0 ;;
+  "plugins "*)
+    if [ "${2:-}" = "install" ]; then exit 0; fi
+    printf '%s\n' "${FAKE_SF_PLUGINS:-sfdx-hardis 8.30.0}"; exit 0 ;;
+  "org list")
+    if [ -n "${FAKE_SF_ORG_LIST:-}" ]; then cat "$FAKE_SF_ORG_LIST"; exit 0; fi
+    cat <<'JSON'
+{"status":0,"result":{"other":[],"sandboxes":[],"nonScratchOrgs":[
+{"alias":"ClientA-Partial","username":"consultant@clienta.com.partial","instanceUrl":"https://clienta--partial.sandbox.my.salesforce.com","isSandbox":true,"connectedStatus":"Connected"},
+{"alias":"ClientA-Full","username":"consultant@clienta.com.full","instanceUrl":"https://clienta--full.sandbox.my.salesforce.com","isSandbox":true,"connectedStatus":"Connected"}
+],"scratchOrgs":[]}}
+JSON
+    exit 0 ;;
+  "org display")
+    alias="$(target_org "$@")"
+    if in_list "$alias" "${FAKE_SF_EXPIRED:-}"; then echo "Error: expired access/refresh token" >&2; exit 1; fi
+    echo "{\"status\":0,\"result\":{\"alias\":\"$alias\",\"connectedStatus\":\"Connected\"}}"; exit 0 ;;
+  "hardis org")
+    alias="$(target_org "$@")"
+    if in_list "$alias" "${FAKE_SF_FAIL:-}"; then echo "Error: could not connect to $alias" >&2; exit 1; fi
+    d=force-app/main/default
+    mkdir -p manifest hardis-report "$d/objects/Account" "$d/objects/Case/fields" "$d/flexipages" \
+      "$d/siteDotComSites" "$d/cleanDataServices"
+    cat > manifest/package-all-org-items.xml <<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types><members>Account</members><members>Case</members><members>Contact</members><name>CustomObject</name></types>
+    <version>67.0</version>
+</Package>
+XML
+    cp manifest/package-all-org-items.xml manifest/package-backup-items.xml
+    echo "run $(date +%s)$RANDOM" > hardis-report/report.txt
+    # Hardis leaves an empty placeholder for a standard object with no custom field.
+    if [ ! -s "$d/objects/Account/Account.object-meta.xml" ] || ! grep -q '<label>' "$d/objects/Account/Account.object-meta.xml"; then
+      printf '<?xml version="1.0" encoding="UTF-8"?>\n<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata"/>\n' \
+        > "$d/objects/Account/Account.object-meta.xml"
+    fi
+    printf '<CustomField><fullName>Status__c</fullName></CustomField>\n' > "$d/objects/Case/fields/Status__c.field-meta.xml"
+    if [ "${FAKE_SF_CHANGE:-}" = "1" ]; then page="v2 $(date +%s)$RANDOM"; else page="${FAKE_SF_PAGE:-v1}"; fi
+    printf '<FlexiPage><masterLabel>%s</masterLabel></FlexiPage>\n' "$page" > "$d/flexipages/Case_Record_Page.flexipage-meta.xml"
+    printf '%s\n' "${FAKE_SF_NOISE:-site}" > "$d/siteDotComSites/X.site"
+    printf '%s\n' "${FAKE_SF_NOISE:-clean}" > "$d/cleanDataServices/Y.cleanDataService-meta.xml"
+    exit 0 ;;
+  "project retrieve")
+    shift 2
+    while [ "$#" -gt 0 ]; do
+      if [ "$1" = "--metadata" ]; then
+        o="${2#CustomObject:}"
+        mkdir -p "force-app/main/default/objects/$o"
+        printf '<?xml version="1.0" encoding="UTF-8"?>\n<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata"><label>%s</label></CustomObject>\n' "$o" \
+          > "force-app/main/default/objects/$o/$o.object-meta.xml"
+        shift
+      fi
+      shift
+    done
+    echo '{"status":0}'; exit 0 ;;
+esac
+echo "fake sf: unhandled call: $*" >&2
+exit 3

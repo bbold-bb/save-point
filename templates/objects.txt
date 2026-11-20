@@ -1,0 +1,10 @@
+# Standard objects whose full settings are always backed up for this project, even before they're customized.
+# One API name per line. Objects with custom fields are picked up without being listed here.
+Account
+Contact
+Case
+Opportunity
+Lead
+Task
+Event
+User

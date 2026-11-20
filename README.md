@@ -7,7 +7,7 @@ Save Point is a set of scripts plus one agent skill (`org-backups`) that works i
 ## Get started
 
 ```bash
-git clone <this repo> "$HOME/Save Point"
+git clone https://github.com/bbold-bb/save-point.git "$HOME/Save Point"
 ```
 
 ```bash

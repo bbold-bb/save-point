@@ -33,8 +33,9 @@ Run `"$KIT/bin/doctor.sh"`. If it says no backup folder is set, run the setup wi
 
 ## Setup wizard
 
-Six steps, in order. Each step calls a script and checks the result before moving on. When a step fails, stop, explain it in plain words, and say what to do. Don't skip ahead. Full detail for each step is in `references/setup.md`; read it before starting.
+An opening, then six steps, in order. Each step calls a script and checks the result before moving on. When a step fails, stop, explain it in plain words, and say what to do. Don't skip ahead. Full detail for each step is in `references/setup.md`; read it before starting.
 
+0. **Opening.** Before running anything, orient the consultant: what Save Point does, what stays where, the six steps, the questions they'll answer, what they'll do themselves, and about how long it takes. Use the opening in `references/setup.md`. Then ask if they're ready to start, and wait for their yes.
 1. **Dependencies.** `setup.sh --check --json`. For each item not ok, say what it is and ask before `setup.sh --install <item>`. Homebrew and the Xcode Command Line Tools need the consultant (a password or a dialog); Google Drive for desktop is a download. Check again until every item is ok.
 2. **Folders.** Ask where the backup folder goes (default `~/Org Backups`), then `init.sh "<folder>"`. Ask for the Drive folder (default `~/Library/CloudStorage/GoogleDrive-<them>@kicksaw.com/My Drive/Org Backups`), then `set-drive.sh "<folder>"`. If it's refused, explain why.
 3. **Orgs.** `list-orgs.sh`. Show the logins and ask which orgs to back up and which project each belongs to. For an org not logged in, or expired, run `sf org login web --alias <alias>` (add `--instance-url <url>` for Government Cloud or a custom login domain) and let the consultant sign in. Ask whether each project's metadata may go to Kicksaw Drive. Then `add-org.sh "<project>" "<org>" "<alias>"`, with `--no-drive` where the answer was no.

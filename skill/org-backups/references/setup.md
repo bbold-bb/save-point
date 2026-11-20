@@ -2,6 +2,30 @@
 
 Work through the steps in order. Say what each step is for in one sentence before running it. After each script, read its output and exit code. Exit 0 means the step worked. Anything else means stop and explain.
 
+## 0. Opening
+
+Start with this, before any script runs. Say it in your own words, keep it short, and keep every point:
+
+> **What Save Point does.** It saves the metadata of the Salesforce orgs you pick (objects, fields, flows, Apex, layouts, profiles and the rest of the configuration) on a schedule, so after a sandbox refresh or a deleted org you can see what was there and put it back. It never changes an org and never saves records.
+>
+> **Where backups go.** Every save stays in a folder on this Mac, as a history you can go back through. By default, a copy of each org's history also goes to your own Kicksaw Google Drive (My Drive). You can turn that copy off for any client whose contract keeps their metadata off Kicksaw Drive, or for all of them. Nothing goes to GitHub, a shared drive, or anywhere else.
+>
+> **What happens next.** Six steps:
+> 1. Check and install the tools it needs.
+> 2. Choose the backup folder and the Drive folder.
+> 3. Pick the orgs to back up.
+> 4. Name the standard objects each client uses.
+> 5. Set the schedule.
+> 6. Run the first backup and check it worked.
+>
+> **Questions you'll answer.** About five, plus a few per client: where to keep backups on this Mac, which Drive folder to use, which orgs to back up and which client each belongs to, whether each client's metadata may go to your Drive, which standard objects each client uses, and what times to run. Each has a suggested answer, so "the default is fine" works for most.
+>
+> **What you'll do yourself.** Approve any installs (some ask for your Mac password), sign in to each org in the browser (I never see a password), and switch on one Mac permission, Full Disk Access, in System Settings. I'll walk you through each one.
+>
+> **How long.** About 15 to 30 minutes, plus a few minutes per org for the first backup, which runs in the background.
+
+Then ask: "Ready to start?" Wait for a yes. If they have questions, answer them first (`what-is-backed-up.md` covers what is and isn't saved).
+
 ## 1. Dependencies
 
 Run `setup.sh --check --json`. Each item has `status` (`ok`, `old`, `missing`, or for Homebrew `not needed`) and a `fix`.

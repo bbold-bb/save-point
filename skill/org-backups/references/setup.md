@@ -4,27 +4,32 @@ Work through the steps in order. Say what each step is for in one sentence befor
 
 ## 0. Opening
 
-Start with this, before any script runs. Say it in your own words, keep it short, and keep every point:
+Start with this, before any script runs. It's a one-on-one conversation with the person setting up Save Point, so talk to them directly: "you" for them, "I" for yourself, "we" for what you'll do together. Never call them "the consultant" to their face. Keep it short and keep every point:
 
-> **What Save Point does.** It saves the metadata of the Salesforce orgs you pick (objects, fields, flows, Apex, layouts, profiles and the rest of the configuration) on a schedule, so after a sandbox refresh or a deleted org you can see what was there and put it back. It never changes an org and never saves records.
+> **What Save Point does.** It saves the metadata of the Salesforce orgs you pick (objects, fields, flows, Apex, layouts, profiles and the rest of the configuration) on a schedule. If a sandbox is refreshed or an org is deleted, you can see what was there and put it back. It never changes an org, and it never saves records.
 >
-> **Where backups go.** Every save stays in a folder on this Mac, as a history you can go back through. By default, a copy of each org's history also goes to your own Kicksaw Google Drive (My Drive). You can turn that copy off for any client whose contract keeps their metadata off Kicksaw Drive, or for all of them. Nothing goes to GitHub, a shared drive, or anywhere else.
+> **Where your backups go.** Every save stays in a folder on your Mac, as a history you can go back through. By default, a copy of each org's history also goes to your own Kicksaw Google Drive (My Drive). You can turn that copy off for any client whose contract keeps their metadata off Kicksaw Drive, or for all of them. Nothing goes to GitHub, a shared drive, or anywhere else.
 >
-> **What happens next.** Six steps:
-> 1. Check and install the tools it needs.
-> 2. Choose the backup folder and the Drive folder.
-> 3. Pick the orgs to back up.
+> **What we'll do.** Six steps:
+> 1. Check for the tools Save Point needs, and install any you're missing.
+> 2. Choose where your backups go on your Mac and in your Drive.
+> 3. Pick the orgs you want backed up.
 > 4. Name the standard objects each client uses.
-> 5. Set the schedule.
-> 6. Run the first backup and check it worked.
+> 5. Set when the backups run.
+> 6. Run your first backup and check it worked.
 >
-> **Questions you'll answer.** About five, plus a few per client: where to keep backups on this Mac, which Drive folder to use, which orgs to back up and which client each belongs to, whether each client's metadata may go to your Drive, which standard objects each client uses, and what times to run. Each has a suggested answer, so "the default is fine" works for most.
+> **What I'll ask you.** About five questions, plus a few for each client: where to keep backups on your Mac, which Drive folder to use, which orgs to back up and which client each one is for, whether each client's metadata can go to your Drive, which standard objects each client uses, and what times to run. I'll suggest an answer for each, so "the default is fine" works for most of them.
 >
-> **What you'll do yourself.** Approve any installs (some ask for your Mac password), sign in to each org in the browser (I never see a password), and switch on one Mac permission, Full Disk Access, in System Settings. I'll walk you through each one.
+> **What you'll do yourself.** Approve any installs (some ask for your Mac password), sign in to each org in your browser (I never see your password), and turn on one Mac setting, Full Disk Access, in System Settings. I'll walk you through each one.
 >
-> **How long.** About 15 to 30 minutes, plus a few minutes per org for the first backup, which runs in the background.
+> **How long it takes.**
+> - **Your part is about 10 minutes** if you already have the tools: answering my questions, signing in to each org (under a minute each), and the Full Disk Access setting (a couple of minutes).
+> - **Installs happen only if you're missing something.** If you already have the Salesforce CLI, that step takes seconds. If your Mac needs Apple's Command Line Tools, the download can take a while, depending on your connection. You don't need to watch it install.
+> - **Your first backup runs on its own** in the background, usually 1 to 10 minutes per org, longer for a large org. You don't need to wait for it. I'll check the result when it's done, or the next time you ask me.
+>
+> **You can stop at any point and come back.** Each step is saved as it finishes. Just say "set up org backups" again, and I'll pick up at the first step that isn't done. Nothing runs on a schedule until step 5.
 
-Then ask: "Ready to start?" Wait for a yes. If they have questions, answer them first (`what-is-backed-up.md` covers what is and isn't saved).
+Then ask: "Ready to start?" Wait for their yes. If they have questions, answer them first (`what-is-backed-up.md` covers what is and isn't saved).
 
 ## 1. Dependencies
 

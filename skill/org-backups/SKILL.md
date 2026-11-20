@@ -25,11 +25,25 @@ Scripts are in `$KIT/bin/`. Every script prints its usage at the top of the file
 - **No Git remote** on any backup repo, and never push one anywhere.
 - **Summaries before files.** Start from the scripts' output, commit messages, and `git show --stat`. Open whole metadata files only when the question needs them. Records are never in the backup.
 - **Ask before installing anything** and before changing the schedule.
+- **Talk to the person in front of you.** Setup and every later question are one-on-one. Say "you" and "your" ("your backups", "you'll sign in"), "I" for yourself, and plain words. This skill calls them "the consultant"; never say that to them.
 - Each backup repo holds an `AGENTS.md` written by sfdx-hardis. Parts of it describe Hardis's hosted CI setup (one branch per org, pipelines, Grafana), which Save Point doesn't use. Its notes on reading the manifests and the history are right; where it disagrees with this skill, follow this skill.
 
 ## First launch or day to day?
 
-Run `"$KIT/bin/doctor.sh"`. If it says no backup folder is set, run the setup wizard. Otherwise do what was asked.
+Run `"$KIT/bin/doctor.sh"`. If it says no backup folder is set, run the setup wizard from the opening. Otherwise do what was asked.
+
+**Picking up an unfinished setup.** A consultant can stop the wizard at any step and come back later. When there is a backup folder but setup isn't finished, say which steps are done and offer to continue from the first one that isn't. Work it out from `doctor.sh` and the backup folder:
+
+| Not done yet | How it shows |
+|---|---|
+| 1. Dependencies | `doctor.sh` fails an item under Dependencies |
+| 2. Drive folder | `doctor.sh` warns "no Drive folder set" and the consultant never chose `set-drive.sh off` |
+| 3. Orgs | `orgs.csv` has no org rows |
+| 4. Standard objects | The files can't show it. While picking up a setup, show each project's `objects.txt` and ask if it's right |
+| 5. Schedule | `doctor.sh` fails Schedule: not installed or not loaded, or Full Disk Access missing |
+| 6. First backup | `doctor.sh` warns "never backed up" for an org |
+
+Every step's script is safe to run again, so when unsure, rerun the step's check.
 
 ## Setup wizard
 
